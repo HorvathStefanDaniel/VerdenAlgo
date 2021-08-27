@@ -3,10 +3,10 @@
 
 <body>
 
-    <canvas id="myCanvas" width="100" height="100" style="border:3px solid #d3d3d3;">
+    <canvas id="myCanvas" width="500" height="500" style="border:3px solid #d3d3d3;">
         Your browser does not support the HTML5 canvas tag.</canvas>
 		
-	<canvas id="myCanvas2" width="90" height="90" style="border:3px solid #d3d3d3;">
+	<canvas id="myCanvas2" width="500" height="500" style="border:3px solid #d3d3d3;">
         Your browser does not support the HTML5 canvas tag.</canvas>
 
 	<script src="https://unpkg.com/js-logger/src/logger.min.js"></script>
@@ -16,11 +16,14 @@
 
         var c = document.getElementById("myCanvas");
         var ctx = c.getContext("2d");
+		
+		var width = c.width;
+		var height = c.height;
         
-		var sizey = 100;		//maximum size, acts kind of like the canvas
-		var sizex = 100;
-		var sploches = 100;
-		var upperLimitRandomTrees = 100; //default 5, multiplicative. This is the thing that actually fills up the array.
+		var sizey = height;		//maximum size, acts kind of like the canvas
+		var sizex = width;
+		var sploches = 60;
+		var upperLimitRandomTrees = 1000; //default 5, multiplicative. This is the thing that actually fills up the array.
 
         var arr = new Array(sizex);            // create an empty array of length `M`
         for (var i = 0; i < sizex; i++) {
@@ -41,6 +44,7 @@
         }
 
         //var topMostCoordinates;
+		/*
         var treesToPlant;
         for (var i = 0; i < sploches; i++) {			//this is going to make a new sploch, generating a new random colour and then puttin those pixels in the arr
             ctx.fillStyle = getRandomColor();
@@ -66,7 +70,7 @@
             availablePlaces.sort(function (a, b) { return getDistance(a[0], a[1], topMostLeft[0], topMostLeft[1]) - getDistance(b[0], b[1], topMostLeft[0], topMostLeft[1]) });
 
 
-            var treesToPlant = Math.ceil(Math.random() * upperLimitRandomTrees) + 10;
+            var treesToPlant = Math.ceil(Math.random() * upperLimitRandomTrees) + 50;
             for (var trees = 0; trees < treesToPlant; trees++) {
                 var coordinates = availablePlaces[0];
                 availablePlaces.shift();
@@ -78,7 +82,7 @@
             	
 
                 //for(var row )
-				
+				*/
 				
 		var c2 = document.getElementById("myCanvas2");
         var ctx2 = c2.getContext("2d");
@@ -88,18 +92,18 @@
 				arr2[i] = new Array(sizey);        // make each element an array
         }
 		
+		for(a = 0;a<sizex; a++)
+			for(b=0;b<sizey; b++)
+				arr2[a][b] = false;
+		
 		//will use the same variables as the other canvas
 		
 		var dirX = 1;
 		var dirY = 1;
 		
-		var midX = Math.ceil(sizex/2);
-		var midY = Math.ceil(sizey/2);
-		
-		var midP = [midX,midY];
-		
-		var nms = false;
-		
+		var myX = Math.ceil(sizex/2);
+		var myY = Math.ceil(sizey/2);
+	
 		const getRandomColor2 = () => {
             const randomColor = Math.floor(Math.random() * 16777215).toString(16);
             return "#" + randomColor;
@@ -112,71 +116,111 @@
 		for (var i = 0; i < sploches; i++) {			//this is going to make a new sploch, generating a new random colour and then puttin those pixels in the arr
 				ctx2.fillStyle = getRandomColor();
 				
-				var treesToPlant = Math.ceil(Math.random() * upperLimitRandomTrees) + 10;
+				var treesToPlant = Math.ceil(Math.random() * upperLimitRandomTrees) + 10;	//get random nr for trees to plant
 				
-				if(i==0){
-					arr[midP[0]][midP[1]] = true;
-					ctx2.fillRect(midP[0],midP[1], 1, 1);
-					midX=midX+dirX;
+				var toMove = 0;
+				
+				//here needs to find the postion closest to the middle that has value = false and set that to myX and myY
+				
+				if(toMove == 0){
+					arr2[myX][myY] = true;
+					ctx2.fillRect(myX,myY,1,1);
+					toMove++;
 					treesToPlant--;
 				}
-				
-				var moveX = true;
-				console.log("before DO");
-				do{
 
-				if(moveX){
-					arr[midX][midY] = true;
-					ctx2.fillRect(midX,midY,1,1);
+				do{
+				
+				
+				if(toMove % 2 == 1){
+					for(var tempMove = 0; tempMove< toMove; tempMove++)
+					{				//move right
+					if(treesToPlant > 0)			// These ifs need an else statement for bouncing back off the edges correctly
+						if(myX+1<width)				// These ifs need an else statement for bouncing back off the edges correctly
+							if(!arr2[myX+1][myY])
+							{
+							myX++;			//need checks for out of bounds and for overlapping existing trees
+							
+							arr2[myX][myY] = true;
+							ctx2.fillRect(myX,myY,1,1);
+							
+							treesToPlant--;	//gonna need an if that checks if there are actually any trees left to plant
+							}
+							else{
+							myX++;
+							}
+					}
 					
-					if(!arr[midX][midY + dirY]){
-					Logger.info("Arr val:" + arr[midX][midY]);
-						dirX=dirX*(-1);
-						
-						midY+=dirY;
-						
-						arr[midX][midY] = true;
-						ctx2.fillRect(midX,midY,1,1);
-						
-						moveX = !moveX;
-					}
-					else{
-						midX+=dirX;
-					}
-				
-				
-				}
-				else{
-					arr[midX][midY] = true;
-					ctx2.fillRect(midX,midY,1,1);
 					
-					if(!arr[midX+dirX][midY]){
-					Logger.info("Arr val:" + arr[midX][midY]);
-						dirY=dirY*(-1);
-						
-						midX+=dirX;
-						
-						arr[midX][midY] = true;
-						ctx2.fillRect(midX,midY,1,1);
-						
-						moveX = !moveX;
+					for(var tempMove = 0; tempMove< toMove; tempMove++)
+					{				//move down
+						if(treesToPlant > 0)
+							if(myY+1<width)
+								if(!arr2[myX][myY+1])
+								{
+								myY++;			//need checks for out of bounds and for overlapping existing trees
+								
+								arr2[myX][myY] = true;
+								ctx2.fillRect(myX,myY,1,1);
+								
+								treesToPlant--;	//gonna need an if that checks if there are actually any trees left to plant
+								}
+								else{
+								myY++;
+								}
 					}
-					else{
-						midY+=dirY;
-					}
-				
 				}
 				
+				
+				
+				if(toMove % 2 == 0){
+				
+				
+					for(var tempMove = 0; tempMove< toMove; tempMove++)
+					{				//move left
+					if(treesToPlant > 0)
+						if(myX-1>0)
+							if(!arr2[myX-1][myY])	
+							{
+							myX--;			//need checks for out of bounds and for overlapping existing trees
+							
+							arr2[myX][myY] = true;
+							ctx2.fillRect(myX,myY,1,1);
+							
+							treesToPlant--;	//gonna need an if that checks if there are actually any trees left to plant
+							}
+							else{
+								myX--;
+							}
+					}
+					
+					
+					for(var tempMove = 0; tempMove< toMove; tempMove++)
+					{				//move up
+					if(treesToPlant > 0)
+						if(myY-1>0)
+							if(!arr2[myX][myY-1])
+							{
+							myY--;			//need checks for out of bounds and for overlapping existing trees
+							
+							arr2[myX][myY] = true;
+							ctx2.fillRect(myX,myY,1,1);
+							
+							treesToPlant--;	//gonna need an if that checks if there are actually any trees left to plant
+							}
+							else{
+								myY--;
+							}
+					}
+					
+					
+				}
 				
 				
 				treesToPlant--;
+				toMove++;
+				
 				}while(treesToPlant>0)
-				
-				for (var trees = 0; trees < treesToPlant; trees++) {
-				
-				
-				
-				}
 			}
 		
 		
