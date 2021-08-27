@@ -2,12 +2,13 @@
 <html>
 
 <body>
+	<canvas id="myCanvas2" width="500" height="500" style="border:3px solid #d3d3d3;">
+        Your browser does not support the HTML5 canvas tag.</canvas>
 
     <canvas id="myCanvas" width="500" height="500" style="border:3px solid #d3d3d3;">
         Your browser does not support the HTML5 canvas tag.</canvas>
 		
-	<canvas id="myCanvas2" width="500" height="500" style="border:3px solid #d3d3d3;">
-        Your browser does not support the HTML5 canvas tag.</canvas>
+	
 
 	<script src="https://unpkg.com/js-logger/src/logger.min.js"></script>
 
@@ -17,7 +18,7 @@
         var c = document.getElementById("myCanvas");
         var ctx = c.getContext("2d");
 		
-		var width = c.width;
+		var width = c.width;	//just made it take these values directly from the canvas
 		var height = c.height;
         
 		var sizey = height;		//maximum size, acts kind of like the canvas
@@ -96,10 +97,8 @@
 			for(b=0;b<sizey; b++)
 				arr2[a][b] = false;
 		
-		//will use the same variables as the other canvas
+		//will use the same variables as the other canvas ****************************************************************************************************** new canvas code starts here
 		
-		var dirX = 1;
-		var dirY = 1;
 		
 		var myX = Math.ceil(sizex/2);
 		var myY = Math.ceil(sizey/2);
